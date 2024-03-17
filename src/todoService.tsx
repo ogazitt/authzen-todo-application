@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext } from "react";
 import { Todo, TodoValues, ITodoService, User } from "./interfaces";
 import { useQuery } from "react-query";
 
