@@ -4,6 +4,7 @@ import { ToastContainer, toast } from "react-toastify";
 import { Todos } from "./components/Todos";
 import { AppProps, Todo, User } from "./interfaces";
 import { useTodoService, useUser } from "./todoService";
+import Select from "react-select";
 
 import "react-toastify/dist/ReactToastify.css";
 import "todomvc-app-css/index.css";
@@ -21,11 +22,16 @@ const ErrorWithLink: React.FC = () => (
   </div>
 );
 
+type PDP = {
+  name: string;
+}
+
 export const App: React.FC<AppProps> = (props) => {
   const auth = useAuth();
-  const { createTodo, listTodos } = useTodoService();
+  const { createTodo, listTodos, listPdps, setPdp } = useTodoService();
   const userEmail = props.user.email;
   const [todos, setTodos] = useState<Todo[] | void>([]);
+  const [pdps, setPdps] = useState<PDP[]>([]);
   const [todoTitle, setTodoTitle] = useState<string>("");
   const [showCompleted, setShowCompleted] = useState<boolean>(true);
   const [showActive, setShowActive] = useState<boolean>(true);
@@ -103,7 +109,23 @@ export const App: React.FC<AppProps> = (props) => {
     setShowCompleted(false);
   };
 
+  const getPdps: () => void = useCallback(() => {
+    const list = async () => {
+      try {
+        const pdps: string[] = await listPdps();
+        setPdps(pdps.map((pdp) => { return { name: pdp } }));
+      } catch (e) {
+        if (e instanceof TypeError && e.message === "Failed to fetch") {
+          errorHandler("",false);
+        } else e instanceof Error && errorHandler(e.message);
+      }
+    };
+
+    list();
+  }, [listPdps]);
+
   useEffect(() => {
+    getPdps();
     refreshTodos();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -181,6 +203,19 @@ export const App: React.FC<AppProps> = (props) => {
       <footer className="info">
         <div className="user-controls">
           <>
+            <div className="user-info">
+              <span className="user-name">
+                Authorize using: &nbsp;&nbsp;
+              </span>
+              <Select
+                isSearchable={false}
+                options={pdps}
+                defaultValue={pdps[0]}
+                getOptionLabel={(pdp: PDP) => pdp.name }
+                getOptionValue={(pdp: PDP) => pdp.name }
+                onChange={(option) => setPdp(option!.name)}
+              />
+            </div>
             <div className="user-info">
               <span className="user-name">
                 Logged in as: <b>{props.user?.email}</b>

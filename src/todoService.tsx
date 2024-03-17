@@ -1,21 +1,27 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { Todo, TodoValues, ITodoService, User } from "./interfaces";
 import { useQuery } from "react-query";
 
-const serviceContext = React.createContext({ token: "" });
+const serviceContext = React.createContext(
+  { token: "", pdp: "", setPdp: (_: string) => {} }
+);
 
 const urls = {
+  pdps: `${process.env.REACT_APP_API_ORIGIN}/pdps`,
   todos: `${process.env.REACT_APP_API_ORIGIN}/todos`,
   todo: (id: string) => `${process.env.REACT_APP_API_ORIGIN}/todos/${id}`,
   user: (id: string) => `${process.env.REACT_APP_API_ORIGIN}/users/${id}`,
 };
 
 export const useTodoService: () => ITodoService = () => {
-  const { token } = useContext(serviceContext);
+  const { token, pdp, setPdp } = useContext(serviceContext);
   const headers: Headers = new Headers();
 
   headers.append("Authorization", `Bearer ${token}`);
   headers.append("Content-Type", "application/json");
+  if (pdp) {
+    headers.append("X_AUTHZEN_PDP", pdp);
+  }
 
   const listTodos = async (): Promise<Todo[]> => {
     const response = await fetch(urls.todos, { headers: headers });
@@ -56,12 +62,19 @@ export const useTodoService: () => ITodoService = () => {
     return await jsonOrError(response);
   };
 
+  const listPdps: () => Promise<string[]> = async () => {
+    const response = await fetch(urls.pdps, { headers: headers });
+    return await jsonOrError(response);
+  };
+
   return {
     listTodos,
     createTodo,
     saveTodo,
     deleteTodo,
     getUser,
+    listPdps,
+    setPdp,
   };
 };
 
@@ -83,14 +96,18 @@ const jsonOrError = async (response: Response): Promise<any> => {
 
 export type ServiceProps = {
   token: string;
+  pdp: string;
+  setPdp: (pdp: string) => void
 };
 
 const TodoService: React.FC<React.PropsWithChildren<ServiceProps>> = ({
   children,
   token,
+  pdp,
+  setPdp
 }) => {
   return (
-    <serviceContext.Provider value={{ token }}>
+    <serviceContext.Provider value={{ token, pdp, setPdp }}>
       {children}
     </serviceContext.Provider>
   );

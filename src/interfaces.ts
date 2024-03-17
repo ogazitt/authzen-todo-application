@@ -21,6 +21,8 @@ export interface ITodoService {
   saveTodo: (id: string, values: TodoValues) => Promise<Todo[]>;
   deleteTodo: (todo: Todo) => Promise<void | Response>;
   getUser: (sub: string) => Promise<User>;
+  listPdps: () => Promise<string[]>;
+  setPdp: (pdp: string) => void;
 }
 
 export interface TodoProps {

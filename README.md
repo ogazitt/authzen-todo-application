@@ -1,6 +1,8 @@
-# React Todo App
+# AuthZEN Interop React Todo Application
 
-This is the front-end for the React Todo application example.
+This is the front-end for a React Todo application, which is authorized using the AuthZEN evaluations API.
+
+In addition to providing a standard Todo interface based on the [TodoMVC](https://todomvc.com) template and [CSS](https://github.com/tastejs/todomvc-app-css), the application allows a user to select from a set of AuthZEN-compatible Policy Decision Points (PDPs) which provide externalized authorization for the application routes.
 
 ## Running the front end
 
@@ -8,22 +10,15 @@ This is the front-end for the React Todo application example.
 
 `yarn start`
 
-## Backends
+## Backend
 
 This sample requires a backend that implements the Todo API.
 
-The following language-specific back-end sample apps are available, which demonstrate using Aserto for authorization:
+The [authzen-todo-backend](https://github.com/aserto-dev/authzen-todo-backend) repo contains a Node.JS implementation of the API, which calls an AuthZEN-compliant Policy Decision Point (PDP) to authorize each request. See instructions in that repo for how to build, configure, and run the backend.
 
-|                                                                                                                  | Language | Repo                                           |
-|------------------------------------------------------------------------------------------------------------------| --- |------------------------------------------------|
-| <img src="https://raw.githubusercontent.com/aserto-dev/aserto-docs/main/static/nodejs.svg" height="30" />        | Node.js | https://github.com/aserto-demo/todo-node-js-v2 |
-| <img src="https://raw.githubusercontent.com/aserto-dev/aserto-docs/main/static/go.svg" height="30" />            | Go | https://github.com/aserto-demo/todo-go-v2      |
-| <img src="https://raw.githubusercontent.com/aserto-dev/aserto-docs/main/static/java.svg" height="30" />          | Java | https://github.com/aserto-demo/todo-java-v2    |
-| <img src="https://raw.githubusercontent.com/aserto-dev/aserto-docs/main/static/python.svg" height="30" />        | Python | https://github.com/aserto-demo/todo-python-v2  |
-| <img src="https://raw.githubusercontent.com/aserto-dev/aserto-docs/main/static/ruby.svg" height="30" />          | Ruby | https://github.com/aserto-demo/todo-ruby-v2    |
-| <img src="https://raw.githubusercontent.com/aserto-dev/aserto-docs/main/static/dotnet-core.svg" height="30" />   | .NET | https://github.com/aserto-demo/todo-dotnet-v2  |
+Alternatively, the backend is hosted [here](https://authzen-todo-backend.demo.aserto.com). The `.env` file in this repo set the `REACT_APP_API_ORIGIN` environment variable to this service. If you'd like to point it instead to your own backend, simply change the value of this variable (e.g. `http://localhost:8080`).
 
-## Identity Providers
+## Identities
 
 This sample uses a demo identity provider called "Citadel", with built-in users such as Rick and Morty. They all using the same password: ` V@erySecre#t123!`
 
@@ -34,6 +29,3 @@ This sample uses a demo identity provider called "Citadel", with built-in users 
 | Beth Smith | beth@the-smiths.com |
 | Summer Smith | summer@the-smiths.com |
 | Jerry Smith | jerry@the-smiths.com |
-
-To try it with your own IDP (and users), refer to the [Auth0](https://github.com/aserto-demo/todo-application-auth0) and [Okta](https://github.com/aserto-demo/todo-application-okta) examples.
-
